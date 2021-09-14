@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import {
   Layout,
   Page,
@@ -10,29 +10,34 @@ import {
   ChoiceList,
   SettingToggle,
 } from '@shopify/polaris';
+import 'tailwindcss/tailwind.css';
 import {ImportMinor} from '@shopify/polaris-icons';
 
 export default function App() {
   const API_KEY = useRef(process.env.NASA);
-  const breadcrumbs = [{content: 'Sample apps'}, {content: 'next.js'}];
+  // const breadcrumbs = [{content: 'Sample apps'}, {content: 'next.js'}];
   const primaryAction = {content: 'New product'};
   const secondaryActions = [{content: 'Import', icon: ImportMinor}];
+
+  const [apods, setApods] = useState([]);
+  const handleApodsChange = useCallback((val) => setApods(val), []);
 
   useEffect(() => {
     fetch(`https://api.nasa.gov/planetary/apod?api_key=${API_KEY.current}`)
       .then(response => response.json())
-      .then(data => console.log(data));
+      .then(data => handleApodsChange(data));
   }, [])
 
   return (
     <Page
-      title="Polaris"
-      breadcrumbs={breadcrumbs}
+      title="Spacestagram"
+      // breadcrumbs={breadcrumbs}
       primaryAction={primaryAction}
-      secondaryActions={secondaryActions}
+      // secondaryActions={secondaryActions}
     >
       <Layout>
-        
+        <Layout.Section>
+        </Layout.Section>
         <Layout.Section>
           <FooterHelp>
             For more details on Polaris, visit our{' '}
