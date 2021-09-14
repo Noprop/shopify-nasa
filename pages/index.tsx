@@ -36,12 +36,18 @@ export default function App() {
   const handleApodsChange = useCallback((val) => setApods(val), []);
 
   useEffect(() => {
-    if (apods.length == 0) {
-      fetch(`https://api.nasa.gov/planetary/apod?api_key=${API_KEY.current}`)
+    if (apods.length < 5) {
+      const today = new Date();
+      const todayDate = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+      today.setDate(today.getDate() - 7);
+      const lastWeekDate = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+
+      const params = 'start_date=' + lastWeekDate + '&end_date=' + todayDate + '&api_key=' + API_KEY.current;
+      fetch('https://api.nasa.gov/planetary/apod?' + params)
         .then(response => response.json())
         .then(data => {
-          console.log(data);
-          handleApodsChange([...apods, data])
+          const reverseData = data.reverse();
+          handleApodsChange(reverseData)
         });
     }
   }, [])
@@ -61,7 +67,6 @@ export default function App() {
       <Layout>
         <Layout.Section>
           {apods.map((apod, idx) => {
-            console.log('test')
             return (
               <MediaCard 
                 title={apod.title}
@@ -79,14 +84,6 @@ export default function App() {
               </MediaCard>
             )
           })}
-          {/* {apods.forEach(item => {
-            console.log(item);
-            return (
-              <Card 
-                title="Test"
-              />
-            )
-          })} */}
         </Layout.Section>
         <Layout.Section>
           <FooterHelp>
