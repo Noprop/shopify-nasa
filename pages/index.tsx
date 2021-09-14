@@ -3,7 +3,7 @@ import {
   Layout,
   Page,
   FooterHelp,
-  Card,
+  MediaCard,
   Link,
   Button,
   TextField,
@@ -16,20 +16,19 @@ import {ImportMinor} from '@shopify/polaris-icons';
 
 
 interface Apod {
-  copyright: String
-  date: String
-  explanation: String
-  hdurl: String
-  media_type: String
-  service_version: String
-  title: String
-  url: String
+  copyright: string
+  date: string
+  explanation: string
+  hdurl: string
+  media_type: string
+  service_version: string
+  title: string
+  url: string
 }
 type Apods = Apod[];
 
 export default function App() {
   const API_KEY = useRef(process.env.NASA);
-  // const breadcrumbs = [{content: 'Sample apps'}, {content: 'next.js'}];
   const primaryAction = {content: 'New product'};
   const secondaryActions = [{content: 'Import', icon: ImportMinor}];
 
@@ -37,15 +36,19 @@ export default function App() {
   const handleApodsChange = useCallback((val) => setApods(val), []);
 
   useEffect(() => {
-    fetch(`https://api.nasa.gov/planetary/apod?api_key=${API_KEY.current}`)
-      .then(response => response.json())
-      .then(data => handleApodsChange([...apods, data]));
+    if (apods.length == 0) {
+      fetch(`https://api.nasa.gov/planetary/apod?api_key=${API_KEY.current}`)
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+          handleApodsChange([...apods, data])
+        });
+    }
   }, [])
 
   return (
     <Page
       title="Spacestagram"
-      // breadcrumbs={breadcrumbs}
       primaryAction={primaryAction}
       // secondaryActions={secondaryActions}
       thumbnail={
@@ -57,6 +60,33 @@ export default function App() {
     >
       <Layout>
         <Layout.Section>
+          {apods.map((apod, idx) => {
+            console.log('test')
+            return (
+              <MediaCard 
+                title={apod.title}
+                description={apod.explanation}
+                key={idx}
+              >
+                <img 
+                  alt=""
+                  style={{
+                    objectFit: 'cover',
+                    objectPosition: 'center',
+                  }}
+                  src={apod.hdurl ? apod.hdurl : apod.url}
+                />
+              </MediaCard>
+            )
+          })}
+          {/* {apods.forEach(item => {
+            console.log(item);
+            return (
+              <Card 
+                title="Test"
+              />
+            )
+          })} */}
         </Layout.Section>
         <Layout.Section>
           <FooterHelp>
