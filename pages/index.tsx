@@ -9,9 +9,23 @@ import {
   TextField,
   ChoiceList,
   SettingToggle,
+  Thumbnail,
 } from '@shopify/polaris';
 import 'tailwindcss/tailwind.css';
 import {ImportMinor} from '@shopify/polaris-icons';
+
+
+interface Apod {
+  copyright: String
+  date: String
+  explanation: String
+  hdurl: String
+  media_type: String
+  service_version: String
+  title: String
+  url: String
+}
+type Apods = Apod[];
 
 export default function App() {
   const API_KEY = useRef(process.env.NASA);
@@ -19,13 +33,13 @@ export default function App() {
   const primaryAction = {content: 'New product'};
   const secondaryActions = [{content: 'Import', icon: ImportMinor}];
 
-  const [apods, setApods] = useState([]);
+  const [apods, setApods] = useState<Apods>([]);
   const handleApodsChange = useCallback((val) => setApods(val), []);
 
   useEffect(() => {
     fetch(`https://api.nasa.gov/planetary/apod?api_key=${API_KEY.current}`)
       .then(response => response.json())
-      .then(data => handleApodsChange(data));
+      .then(data => handleApodsChange([...apods, data]));
   }, [])
 
   return (
@@ -34,6 +48,12 @@ export default function App() {
       // breadcrumbs={breadcrumbs}
       primaryAction={primaryAction}
       // secondaryActions={secondaryActions}
+      thumbnail={
+        <Thumbnail 
+          source="/nasa-logo.png"
+          alt=""
+        />
+      }
     >
       <Layout>
         <Layout.Section>
