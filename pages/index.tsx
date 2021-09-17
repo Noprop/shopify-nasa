@@ -7,10 +7,11 @@ import {
   Link,
   Button,
   Thumbnail,
+  Modal,
 } from '@shopify/polaris';
 import 'tailwindcss/tailwind.css';
 import dayjs from 'dayjs';
-
+import DatePicker from '../components/DatePicker';
 
 interface Apod {
   copyright: string
@@ -26,7 +27,10 @@ type Apods = Apod[];
 
 export default function App() {
   const API_KEY = useRef(process.env.NASA);
-  const primaryAction = {content: 'New product'};
+  // const primaryAction = {
+  //   content: 'Change date',
+  //   onAction: () => console.log('test')
+  // };
   const [apods, setApods] = useState<Apods>([]);
   const handleApodsChange = useCallback((val) => setApods(val), []);
 
@@ -45,19 +49,35 @@ export default function App() {
     }
   }, [])
 
+  const [modalStatus, setModalStatus] = useState(true);
+  const handleModalOpen = useCallback(() => setModalStatus(true), []);
+  const handleModalClose = useCallback(() => {
+    setModalStatus(false);
+  }, []);
+  const modalButtonRef = useRef(null);
+  const modalActivator = (
+    <div 
+      ref={modalButtonRef}
+      style={{marginBottom: '10px'}}>
+      <Button onClick={handleModalOpen}>Change date</Button>
+    </div>
+  );
+
   return (
     <Page
+      fullWidth
       title="Spacestagram"
-      primaryAction={primaryAction}
+      // primaryAction={primaryAction}
       thumbnail={
         <Thumbnail 
           source="/nasa-logo.png"
-          alt=""
+          alt="NASA Logo"
         />
       }
     >
       <Layout>
         <Layout.Section>
+          {modalActivator}
           {apods.map((apod, idx) => {
             return (
               <MediaCard 
@@ -84,6 +104,28 @@ export default function App() {
           </FooterHelp>
         </Layout.Section>
       </Layout>
+      <div style={{height: '500px'}}>
+        <Modal
+          activator={modalButtonRef}
+          open={modalStatus}
+          onClose={handleModalClose}
+          title="View more photos by selecting a date below"
+          primaryAction={{
+            content: 'Change',
+            onAction: handleModalClose,
+          }}
+          secondaryActions={[
+            {
+              content: 'Learn more',
+              onAction: handleModalClose,
+            },
+          ]}
+        >
+          <Modal.Section>
+            <DatePicker />
+          </Modal.Section>
+        </Modal>
+      </div>
     </Page>
   );
 }
