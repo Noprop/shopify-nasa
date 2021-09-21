@@ -1,5 +1,5 @@
 import React from 'react';
-import App, {Container} from 'next/app';
+import App from 'next/app';
 import {AppProvider} from '@shopify/polaris';
 import enTranslations from '@shopify/polaris/locales/en.json';
 import '@shopify/polaris/dist/styles.css';
