@@ -62,11 +62,36 @@ export default function App() {
         }
       });
   }
+  const getMoreApodsWithDate = (start: Date, end: Date) => {
+    const fromDate = dayjs(start).format('YYYY-MM-DD');
+    const toDate = dayjs(end).format('YYYY-MM-DD');
+    // const fromDate = dayjs(`${String(year)}-${String(month + 1)}-${String(day)}`);
+    // console.log(fromDate);
+    // console.log(fromDate.format('YYYY-MM-DD'));
+    // const toDate = currentLastDay.subtract(1, 'day').format('YYYY-MM-DD');
+    // const newLastDay = currentLastDay.subtract(8, 'day');
+    // setCurrentLastDay(newLastDay);
+    // const fromDate = newLastDay.format('YYYY-MM-DD');
 
-  const [{ day, month, year }, setDate] = useState({ 
-    day: dayjs().date(),
-    month: dayjs().month(),
-    year: dayjs().year() 
+    const params = 'start_date=' + fromDate + '&end_date=' + toDate + '&api_key=' + API_KEY.current;
+    console.log(params);
+    fetch('https://api.nasa.gov/planetary/apod?' + params)
+      .then(response => response.json())
+      .then(data => {
+        if (data.length > 0) {
+          const reverseData = data.reverse();
+          handleApodsChange(reverseData);
+        }
+      });
+  }
+
+  const handleModalCloseAndUpdateApods = () => {
+    setModalStatus(false);
+    getMoreApodsWithDate(selectedDates.start, selectedDates.end);
+  }
+  const [selectedDates, setSelectedDates] = useState({
+    start: new Date(),
+    end: new Date()
   });
   const [modalStatus, setModalStatus] = useState(false);
   const handleModalOpen = useCallback(() => setModalStatus(true), []);
@@ -137,11 +162,11 @@ export default function App() {
           title="View more photos by selecting a date below"
           primaryAction={{
             content: 'Select',
-            onAction: handleModalClose,
+            onAction: handleModalCloseAndUpdateApods,
           }}
         >
           <Modal.Section>
-            <DatePicker day={day} month={month} year={year} setDate={setDate} />
+            <DatePicker setParentSelectedDates={setSelectedDates} />
           </Modal.Section>
         </Modal>
       </div>
