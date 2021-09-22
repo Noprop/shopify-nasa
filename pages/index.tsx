@@ -27,23 +27,41 @@ type Apods = Apod[];
 
 export default function App() {
   const API_KEY = useRef(process.env.NASA);
+  const [currentLastDay, setCurrentLastDay] = useState(dayjs().subtract(7, 'day'))
   const [apods, setApods] = useState<Apods>([]);
   const handleApodsChange = useCallback((val) => setApods(val), []);
 
   useEffect(() => {
     if (apods.length < 5) {
-      const todayDate = dayjs().format('YYYY-MM-DD');
-      const lastWeekDate = dayjs().subtract(7, 'day').format('YYYY-MM-DD');
+      const toDate = dayjs().format('YYYY-MM-DD');
+      const fromDate = currentLastDay.format('YYYY-MM-DD');
 
-      const params = 'start_date=' + lastWeekDate + '&end_date=' + todayDate + '&api_key=' + API_KEY.current;
+      const params = 'start_date=' + fromDate + '&end_date=' + toDate + '&api_key=' + API_KEY.current;
       fetch('https://api.nasa.gov/planetary/apod?' + params)
         .then(response => response.json())
         .then(data => {
           const reverseData = data.reverse();
-          handleApodsChange(reverseData)
+          handleApodsChange(reverseData);
         });
     }
   }, [])
+
+  const getMoreApods = (days = 7) => {
+    const toDate = currentLastDay.subtract(1, 'day').format('YYYY-MM-DD');
+    const newLastDay = currentLastDay.subtract(8, 'day');
+    setCurrentLastDay(newLastDay);
+    const fromDate = newLastDay.format('YYYY-MM-DD');
+
+    const params = 'start_date=' + fromDate + '&end_date=' + toDate + '&api_key=' + API_KEY.current;
+    fetch('https://api.nasa.gov/planetary/apod?' + params)
+      .then(response => response.json())
+      .then(data => {
+        if (data.length > 0) {
+          const reverseData = data.reverse();
+          handleApodsChange([...apods, ...reverseData]);
+        }
+      });
+  }
 
   const [{ day, month, year }, setDate] = useState({ 
     day: dayjs().date(),
@@ -105,12 +123,11 @@ export default function App() {
             )
           })}
         </Layout.Section>
-        {/* <Layout.Section>
+        <Layout.Section>
           <FooterHelp>
-            For more details on Polaris, visit our{' '}
-            <Link url="https://polaris.shopify.com">style guide</Link>.
+            Images and descriptions are from NASA's Astronomy Picture of the Day. Click <Button onClick={() => getMoreApods()}plain>here</Button> to load more.
           </FooterHelp>
-        </Layout.Section> */}
+        </Layout.Section>
       </Layout>
       <div style={{height: '500px'}}>
         <Modal
