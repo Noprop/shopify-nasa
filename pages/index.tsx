@@ -45,7 +45,12 @@ export default function App() {
     }
   }, [])
 
-  const [modalStatus, setModalStatus] = useState(true);
+  const [{ day, month, year }, setDate] = useState({ 
+    day: dayjs().date(),
+    month: dayjs().month(),
+    year: dayjs().year() 
+  });
+  const [modalStatus, setModalStatus] = useState(false);
   const handleModalOpen = useCallback(() => setModalStatus(true), []);
   const handleModalClose = useCallback(() => {
     setModalStatus(false);
@@ -80,6 +85,10 @@ export default function App() {
                 title={apod.title}
                 description={apod.explanation}
                 key={idx}
+                primaryAction={{
+                  content: 'Like',
+                  onAction: () => {}
+                }}
               >
                 {apod.media_type === 'video' 
                   ? <iframe src={apod.url} height='100%' width='100%'></iframe>
@@ -115,7 +124,7 @@ export default function App() {
           }}
         >
           <Modal.Section>
-            <DatePicker />
+            <DatePicker day={day} month={month} year={year} setDate={setDate} />
           </Modal.Section>
         </Modal>
       </div>
