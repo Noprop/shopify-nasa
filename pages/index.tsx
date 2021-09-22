@@ -27,10 +27,6 @@ type Apods = Apod[];
 
 export default function App() {
   const API_KEY = useRef(process.env.NASA);
-  // const primaryAction = {
-  //   content: 'Change date',
-  //   onAction: () => console.log('test')
-  // };
   const [apods, setApods] = useState<Apods>([]);
   const handleApodsChange = useCallback((val) => setApods(val), []);
 
@@ -85,24 +81,27 @@ export default function App() {
                 description={apod.explanation}
                 key={idx}
               >
-                <img 
-                  alt=""
-                  style={{
-                    objectFit: 'cover',
-                    objectPosition: 'center',
-                  }}
-                  src={apod.hdurl ? apod.hdurl : apod.url}
-                />
+                {apod.media_type === 'video' 
+                  ? <iframe src={apod.url} height='100%' width='100%'></iframe>
+                  : <img
+                      alt=""
+                      style={{
+                        objectFit: 'cover',
+                        objectPosition: 'center',
+                      }}
+                      src={apod.hdurl ? apod.hdurl : apod.url}
+                    />
+                }
               </MediaCard>
             )
           })}
         </Layout.Section>
-        <Layout.Section>
+        {/* <Layout.Section>
           <FooterHelp>
             For more details on Polaris, visit our{' '}
             <Link url="https://polaris.shopify.com">style guide</Link>.
           </FooterHelp>
-        </Layout.Section>
+        </Layout.Section> */}
       </Layout>
       <div style={{height: '500px'}}>
         <Modal
@@ -111,15 +110,9 @@ export default function App() {
           onClose={handleModalClose}
           title="View more photos by selecting a date below"
           primaryAction={{
-            content: 'Change',
+            content: 'Select',
             onAction: handleModalClose,
           }}
-          secondaryActions={[
-            {
-              content: 'Learn more',
-              onAction: handleModalClose,
-            },
-          ]}
         >
           <Modal.Section>
             <DatePicker />
