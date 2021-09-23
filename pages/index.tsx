@@ -47,11 +47,9 @@ export default function App() {
     }
   }, [])
 
-  const getMoreApods = (days = 7) => {
-    const toDate = currentLastDay.subtract(1, 'day').format('YYYY-MM-DD');
-    const newLastDay = currentLastDay.subtract(8, 'day');
-    setCurrentLastDay(newLastDay);
-    const fromDate = newLastDay.format('YYYY-MM-DD');
+  const getMoreApods = (start: string, end: string) => {
+    const fromDate = dayjs(start).format('YYYY-MM-DD');
+    const toDate = dayjs(end).format('YYYY-MM-DD');
 
     const params = 'start_date=' + fromDate + '&end_date=' + toDate + '&api_key=' + API_KEY.current;
     fetch('https://api.nasa.gov/planetary/apod?' + params)
@@ -63,6 +61,7 @@ export default function App() {
         }
       });
   }
+
   const getMoreApodsWithDate = (start: Date, end: Date) => {
     const fromDate = dayjs(start).format('YYYY-MM-DD');
     const toDate = dayjs(end).format('YYYY-MM-DD');
@@ -84,8 +83,8 @@ export default function App() {
     getMoreApodsWithDate(selectedDates.start, selectedDates.end);
   }
   const [selectedDates, setSelectedDates] = useState({
-    start: new Date(),
-    end: new Date()
+    start: new Date(currentLastDay.add(1, 'day').format('YYYY-MM-DD')),
+    end: new Date(currentLastDay.add(8, 'day').format('YYYY-MM-DD'))
   });
   const [modalStatus, setModalStatus] = useState(false);
   const handleModalOpen = useCallback(() => setModalStatus(true), []);
@@ -144,7 +143,14 @@ export default function App() {
         </Layout.Section>
         <Layout.Section>
           <FooterHelp>
-            Images and descriptions are from NASA's Astronomy Picture of the Day. Click <Button onClick={() => getMoreApods()}plain>here</Button> to load more.
+            Images and descriptions are from NASA's Astronomy Picture of the Day. Click{' '}
+            <Button 
+              onClick={() => {
+                getMoreApods(dayjs(selectedDates.start).subtract(7, 'day').toString(), 
+                             dayjs(selectedDates.start).subtract(1, 'day').toString());
+              }}
+              plain
+            >here</Button> to load more.
           </FooterHelp>
         </Layout.Section>
       </Layout>
@@ -160,7 +166,7 @@ export default function App() {
           }}
         >
           <Modal.Section>
-            <DatePicker setParentSelectedDates={setSelectedDates} />
+            <DatePicker parentSelectedDates={selectedDates} setParentSelectedDates={setSelectedDates} />
           </Modal.Section>
         </Modal>
       </div>
