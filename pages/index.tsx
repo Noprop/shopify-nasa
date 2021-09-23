@@ -8,6 +8,7 @@ import {
   Button,
   Thumbnail,
   Modal,
+  TextStyle,
 } from '@shopify/polaris';
 import 'tailwindcss/tailwind.css';
 import dayjs from 'dayjs';
@@ -111,6 +112,7 @@ export default function App() {
       <Layout>
         <Layout.Section>
           {apods.map((apod, idx) => {
+            console.log(apod);
             return (
               <MediaCard
                 title={apod.title}
@@ -133,6 +135,9 @@ export default function App() {
                       src={apod.hdurl ? apod.hdurl : apod.url}
                     />
                 }
+                <div className="media-card-date">
+                  <TextStyle variation="subdued">{apod.date}</TextStyle>
+                </div>
               </MediaCard>
             )
           })}

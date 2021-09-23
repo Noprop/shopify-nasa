@@ -3,3 +3,10 @@
   align-items: center;
   margin-bottom: 0;
 }
+
+.media-card-date {
+  padding: 1.7rem 1.5rem 1.2rem 2rem;
+}
+.Polaris-Card__Section {
+  padding-top: 0;
+}
