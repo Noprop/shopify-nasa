@@ -41,8 +41,10 @@ export default function App() {
       fetch('https://api.nasa.gov/planetary/apod?' + params)
         .then(response => response.json())
         .then(data => {
-          const reverseData = data.reverse();
-          handleApodsChange(reverseData);
+          if (data.length > 0) {
+            const reverseData = data.reverse();
+            handleApodsChange(reverseData);
+          }
         });
     }
   }, [])
