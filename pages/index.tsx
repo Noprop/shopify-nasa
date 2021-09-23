@@ -65,13 +65,6 @@ export default function App() {
   const getMoreApodsWithDate = (start: Date, end: Date) => {
     const fromDate = dayjs(start).format('YYYY-MM-DD');
     const toDate = dayjs(end).format('YYYY-MM-DD');
-    // const fromDate = dayjs(`${String(year)}-${String(month + 1)}-${String(day)}`);
-    // console.log(fromDate);
-    // console.log(fromDate.format('YYYY-MM-DD'));
-    // const toDate = currentLastDay.subtract(1, 'day').format('YYYY-MM-DD');
-    // const newLastDay = currentLastDay.subtract(8, 'day');
-    // setCurrentLastDay(newLastDay);
-    // const fromDate = newLastDay.format('YYYY-MM-DD');
 
     const params = 'start_date=' + fromDate + '&end_date=' + toDate + '&api_key=' + API_KEY.current;
     console.log(params);
@@ -99,19 +92,15 @@ export default function App() {
     setModalStatus(false);
   }, []);
   const modalButtonRef = useRef(null);
-  const modalActivator = (
-    <div 
-      ref={modalButtonRef}
-      style={{marginBottom: '10px'}}>
-      <Button onClick={handleModalOpen}>Change date</Button>
-    </div>
-  );
 
   return (
     <Page
-      fullWidth
+      narrowWidth
+      primaryAction={{
+        content: 'Change Date',
+        onAction: () => handleModalOpen()
+      }}
       title="Spacestagram"
-      // primaryAction={primaryAction}
       thumbnail={
         <Thumbnail 
           source="/nasa-logo.png"
@@ -121,10 +110,9 @@ export default function App() {
     >
       <Layout>
         <Layout.Section>
-          {modalActivator}
           {apods.map((apod, idx) => {
             return (
-              <MediaCard 
+              <MediaCard
                 title={apod.title}
                 description={apod.explanation}
                 key={idx}
@@ -132,9 +120,10 @@ export default function App() {
                   content: 'Like',
                   onAction: () => {}
                 }}
+                portrait
               >
                 {apod.media_type === 'video' 
-                  ? <iframe src={apod.url} height='100%' width='100%'></iframe>
+                  ? <iframe src={apod.url} height='400px' width='100%'></iframe>
                   : <img
                       alt=""
                       style={{

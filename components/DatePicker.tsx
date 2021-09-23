@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { DatePicker as PolarisDatePicker } from '@shopify/polaris';
 import dayjs from 'dayjs';
 
@@ -17,8 +17,8 @@ const DatePicker = ({ setParentSelectedDates }: props) => {
   });
 
   const [selectedDates, setSelectedDates] = useState({
-    start: new Date(`${year}-${month + 1}-${day - 8}`),
-    end: new Date(`${year}-${month + 1}-${day - 1}`),
+    start: new Date(`${year}-${month + 1}-${day - 7}`),
+    end: new Date(`${year}-${month + 1}-${day}`),
   });
 
   const handleMonthChange = useCallback((month, year) => {
@@ -37,7 +37,7 @@ const DatePicker = ({ setParentSelectedDates }: props) => {
       onChange={setSelectedDates}
       onMonthChange={handleMonthChange}
       selected={selectedDates}
-      disableDatesAfter={new Date('Mon Sep 21 2021')}
+      disableDatesAfter={new Date()}
     />
   )
 }
