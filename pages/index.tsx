@@ -4,7 +4,6 @@ import {
   Page,
   FooterHelp,
   MediaCard,
-  Link,
   Button,
   Thumbnail,
   Modal,
@@ -60,6 +59,10 @@ export default function App() {
         if (data.length > 0) {
           const reverseData = data.reverse();
           handleApodsChange([...apods, ...reverseData]);
+          setSelectedDates({
+            start: new Date(fromDate),
+            end: selectedDates.end
+          })
         }
       });
   }
@@ -69,7 +72,6 @@ export default function App() {
     const toDate = dayjs(end).format('YYYY-MM-DD');
 
     const params = 'start_date=' + fromDate + '&end_date=' + toDate + '&api_key=' + API_KEY.current;
-    console.log(params);
     fetch('https://api.nasa.gov/planetary/apod?' + params)
       .then(response => response.json())
       .then(data => {
@@ -85,8 +87,8 @@ export default function App() {
     getMoreApodsWithDate(selectedDates.start, selectedDates.end);
   }
   const [selectedDates, setSelectedDates] = useState({
-    start: new Date(currentLastDay.add(1, 'day').format('YYYY-MM-DD')),
-    end: new Date(currentLastDay.add(8, 'day').format('YYYY-MM-DD'))
+    start: new Date(currentLastDay.format('YYYY-MM-DD')),
+    end: new Date(currentLastDay.add(7, 'day').format('YYYY-MM-DD'))
   });
   const [modalStatus, setModalStatus] = useState(false);
   const handleModalOpen = useCallback(() => setModalStatus(true), []);
@@ -113,7 +115,6 @@ export default function App() {
       <Layout>
         <Layout.Section>
           {apods.map((apod, idx) => {
-            console.log(apod);
             return (
               <MediaCard
                 title={apod.title}
@@ -149,7 +150,7 @@ export default function App() {
             <Button 
               onClick={() => {
                 getMoreApods(dayjs(selectedDates.start).subtract(7, 'day').toString(), 
-                             dayjs(selectedDates.start).subtract(1, 'day').toString());
+                             dayjs(selectedDates.start).toString());
               }}
               plain
             >here</Button> to load more.

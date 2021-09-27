@@ -14,10 +14,10 @@ interface props {
 }
 
 const DatePicker = ({ parentSelectedDates, setParentSelectedDates }: props) => {
-  const [{ day, month, year }, setDate] = useState({ 
+  const [{ day, month, year }, setDate] = useState({
     day: dayjs().date(),
     month: dayjs().month(),
-    year: dayjs().year() 
+    year: dayjs().year()
   });
 
   const [selectedDates, setSelectedDates] = useState({
