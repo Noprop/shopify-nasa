@@ -24,12 +24,18 @@ interface Apod {
   url: string
 }
 type Apods = Apod[];
+interface likedApods {
+  [key: string]: boolean
+}
 
 export default function App() {
   const API_KEY = useRef(process.env.NASA);
   const [currentLastDay, setCurrentLastDay] = useState(dayjs().subtract(7, 'day'))
   const [apods, setApods] = useState<Apods>([]);
   const handleApodsChange = useCallback((val) => setApods(val), []);
+  const [likedApods, setLikedApods] = useState({
+    [currentLastDay.format('YYYY-MM-DD')]: false
+  });
 
   useEffect(() => {
     if (apods.length < 5) {
@@ -97,6 +103,20 @@ export default function App() {
   }, []);
   const modalButtonRef = useRef(null);
 
+  const handleLikedApods = (date: string) => {
+    if (date in likedApods) {
+      setLikedApods({
+        ...likedApods,
+        [date]: !likedApods[date]
+      })
+    } else {
+      setLikedApods({
+        ...likedApods,
+        [date]: true
+      })
+    }
+  };
+
   return (
     <Page
       narrowWidth
@@ -121,8 +141,8 @@ export default function App() {
                 description={apod.explanation}
                 key={idx}
                 primaryAction={{
-                  content: 'Like',
-                  onAction: () => {}
+                  content: likedApods[apod.date] ? 'Liked' : 'Like',
+                  onAction: () => handleLikedApods(apod.date)
                 }}
                 portrait
               >
